@@ -40,7 +40,7 @@ case "$1" in
     rm -f "${PIDFILE}"
   ;;
   *)
-    echo "Usage: $SCRIPTNAME {start|stop}" >&2
+    echo "Usage: $NAME {start|stop}" >&2
     exit 3
   ;;
 esac
