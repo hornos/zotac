@@ -1,0 +1,46 @@
+#! /bin/sh
+
+DESC="PS3 Media Server"
+NAME=pmsd
+DAEMON=./ps3mediaserver
+DAEMON_ARGS=""
+PIDFILE=$NAME.pid
+LOGFILE=$NAME.log
+PORT=5001
+
+# Exit if the package is not installed
+[ -x "$DAEMON" ] || exit 0
+
+case "$1" in
+  start)
+    if test -r "${PIDFILE}" ; then
+      PID=$(cat "${PIDFILE}")
+      echo "${DESC} is running (${PID})"
+      exit 1
+    fi
+    echo "Starting ${DESC}..."
+    nohup "${DAEMON}" ${DAEMON_ARGS} > ${LOGFILE} 2>/dev/null &
+    echo $! > ${PIDFILE}
+    if ! test -z "${PORT}"; then
+      sudo ufw allow ${PORT}
+    fi
+  ;;
+  stop)
+    if ! test -r "${PIDFILE}" ; then
+      echo "$DESC is not running"
+      exit 1
+    fi
+    PID=$(cat "${PIDFILE}")
+    echo "Stopping ${DESC}..."
+    if ! test -z "${PORT}"; then
+      sudo ufw deny ${PORT}
+    fi
+    kill ${PID}
+    kill -0 ${PID} >/dev/null
+    rm -f "${PIDFILE}"
+  ;;
+  *)
+    echo "Usage: $SCRIPTNAME {start|stop}" >&2
+    exit 3
+  ;;
+esac

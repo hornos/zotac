@@ -1,0 +1,36 @@
+#!/bin/sh
+gdn=$(dirname $0)
+
+# java
+JAVA="java"
+if test -z "${JAVA}" ; then
+  if ! test -z "${JAVA_HOME}" ; then
+    JAVA="${JAVA_HOME}/bin/java"
+  fi
+fi
+
+JAVA=${JAVA:-${JAVA_HOME}/bin/java}
+PMS_XMX=${PMS_XMX:-768M}
+PMS_XSS=${PMS_XSS:-1024k}
+PMS_ENC=${PMS_ENC:-UTF-8}
+
+# Setup the classpath
+# since we always cd to the working dir, these
+# a) can be unqualified
+# b) *must* be unqualified
+# https://code.google.com/p/ps3mediaserver/issues/detail?id=1122
+PMS_JAR="${PMS_JAR:-update.jar:pms.jar}"
+
+export PMS_HOME=${PMS_HOME:-${gdn}}
+
+# always cd to the working dir
+# https://code.google.com/p/ps3mediaserver/issues/detail?id=730
+cd ${PMS_HOME}
+
+# Execute the JVM
+exec "${JAVA}" ${JAVA_OPTS} \
+  -Xmx${PMS_XMX} -Xss${PMS_XSS} \
+  -Dfile.encoding=${PMS_ENC} \
+  -Djava.net.preferIPv4Stack=true \
+  -Djava.awt.headless=true \
+  -classpath "${PMS_JAR}" net.pms.PMS "$@"
