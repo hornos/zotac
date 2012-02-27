@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/bash
 
 DESC="PS3 Media Server"
 NAME=pmsd

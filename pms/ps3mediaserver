@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 gdn=$(dirname $0)
 
 # java
