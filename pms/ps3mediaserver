@@ -9,7 +9,6 @@ if test -z "${JAVA}" ; then
   fi
 fi
 
-JAVA=${JAVA:-${JAVA_HOME}/bin/java}
 PMS_XMX=${PMS_XMX:-768M}
 PMS_XSS=${PMS_XSS:-1024k}
 PMS_ENC=${PMS_ENC:-UTF-8}

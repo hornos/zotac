@@ -1,0 +1,35 @@
+#!/bin/bash
+gdn=$(dirname $0)
+gbn=$(basename $0)
+
+# java
+JAVA="java"
+if test -z "${JAVA}" ; then
+  if ! test -z "${JAVA_HOME}" ; then
+    JAVA="${JAVA_HOME}/bin/java"
+  fi
+fi
+
+SIIO_XMX=${SIIO_XMX:-384M}
+SIIO_XMS=${SIIO_XSS:-20M}
+
+
+SIIO_HOME=${SIIO_HOME:-${gdn}/..}
+cd ${SIIO_HOME}
+SIIO_HOME=$(pwd)
+export SIIO_HOME
+
+# Setup the classpath
+SIIO_JAR="${SIIO_JAR:-lib/*:config}"
+
+# Execute the JVM
+exec "${JAVA}" ${JAVA_OPTS} \
+  -Xmx${SIIO_XMX} -Xms${SIIO_XMS} \
+  -XX:+UseParNewGC \
+  -XX:MinHeapFreeRatio=10 \
+  -XX:MaxHeapFreeRatio=20 \
+  -Djava.net.preferIPv4Stack=true \
+  -Djava.awt.headless=true \
+  -Dderby.system.home=${SIIO_HOME}/library \
+  -Dserviio.home=${SIIO_HOME} \
+  -classpath "${SIIO_JAR}" org.serviio.MediaServer "$@"
